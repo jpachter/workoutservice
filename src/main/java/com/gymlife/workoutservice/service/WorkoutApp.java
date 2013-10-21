@@ -14,6 +14,7 @@ public class WorkoutApp extends Application
   {
     Set<Class<?>> s = new HashSet<Class<?>>();
     s.add(ExerciseService.class);
+    s.add(RoutineService.class);
     return s;
   }
 }

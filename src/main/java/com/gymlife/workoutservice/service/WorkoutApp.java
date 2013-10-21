@@ -6,14 +6,14 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
  
-@ApplicationPath("/rest")
-public class HelloApp extends Application
+@ApplicationPath("/")
+public class WorkoutApp extends Application
 {
   @Override
   public Set<Class<?>> getClasses()
   {
     Set<Class<?>> s = new HashSet<Class<?>>();
-    s.add(HelloWorldService.class);
+    s.add(ExerciseService.class);
     return s;
   }
 }

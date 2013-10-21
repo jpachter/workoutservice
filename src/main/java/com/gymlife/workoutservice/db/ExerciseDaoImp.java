@@ -54,7 +54,7 @@ public class ExerciseDaoImp {
       String secondaryMuscles = resultSet.getString("secondary_muscles");
       String difficulty = resultSet.getString("difficulty");
       String type = resultSet.getString("type");
-
+      close();
       return new Exercise(resId, name, muscleGroup, primaryMuscle, secondaryMuscles, difficulty, type);
   }
   
@@ -78,7 +78,7 @@ public class ExerciseDaoImp {
 	      String type = resultSet.getString("type");
 	      all.add(new Exercise(resId, name, muscleGroup, primaryMuscle, secondaryMuscles, difficulty, type));
       }
-      
+      close();
       return all;
   }
 

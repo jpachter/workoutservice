@@ -1,16 +1,15 @@
 package com.gymlife.workoutservice.db.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.gymlife.workoutservice.db.dto.Exercise;
 import com.gymlife.workoutservice.db.dto.Routine;
+import com.gymlife.workoutservice.db.dto.Routines;
 import com.gymlife.workoutservice.db.util.ConnectionFactory;
 import com.gymlife.workoutservice.db.util.DBUtil;
 
@@ -25,8 +24,9 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 	}
 
 	@Override
-	public List<Routine> getRoutines() throws SQLException {
-		List<Routine> all = new ArrayList<Routine>();
+	public Routines getRoutines() throws SQLException {
+		Routines routines = new Routines();
+		List<Routine> routineList = new ArrayList<Routine>();
 		ResultSet result = null;
 
 		try {
@@ -48,14 +48,16 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 				r.setDifficulty(result.getInt("difficulty"));
 				r.setNumDays(result.getInt("num_days"));
 				r.setName(result.getString("name"));
-				all.add(r);
+				routineList.add(r);
 			}
 		} finally {
 			DBUtil.close(result);
 			DBUtil.close(loadAllStmt);
 			DBUtil.close(connection);
 		}
-		return all;
+		
+		routines.setRoutines(routineList);
+		return routines;
 	}
 
 	@Override

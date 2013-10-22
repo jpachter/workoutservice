@@ -1,4 +1,4 @@
-package com.gymlife.workoutservice.db;
+package com.gymlife.workoutservice;
 
 /**
  * Enum for different difficulties.

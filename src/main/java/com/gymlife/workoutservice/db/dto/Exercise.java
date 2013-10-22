@@ -1,4 +1,4 @@
-package com.gymlife.workoutservice.db;
+package com.gymlife.workoutservice.db.dto;
 
 
 public class Exercise {
@@ -11,18 +11,9 @@ public class Exercise {
 	private String difficulty;
 	private String type;
 	
-	public Exercise() {}
-	
-	public Exercise(int id, String workoutName, String muscleGroup, String primaryMuscle, String secondaryMuscles, String difficulty, String workoutType){
-		this.setId(id);
-		this.setWorkoutName(workoutName);
-		this.setMuscleGroup(muscleGroup);
-		this.setPrimaryMuscle(primaryMuscle);
-		this.setSecondaryMuscles(secondaryMuscles);
-		this.setDifficulty(difficulty);
-		this.setWorkoutType(workoutType);
+	public Exercise(){
+		
 	}
-	
 
 	@Override
 	public String toString() {
@@ -53,19 +44,19 @@ public class Exercise {
 		this.difficulty = difficulty;
 	}
 
-	public String getWorkoutType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setWorkoutType(String workoutType) {
+	public void setType(String workoutType) {
 		this.type = workoutType;
 	}
 	
-	public String getWorkoutName() {
+	public String getName() {
 		return name;
 	}
 
-	public void setWorkoutName(String workoutName) {
+	public void setName(String workoutName) {
 		this.name = workoutName;
 	}
 

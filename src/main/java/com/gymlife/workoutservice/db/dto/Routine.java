@@ -1,4 +1,4 @@
-package com.gymlife.workoutservice.db;
+package com.gymlife.workoutservice.db.dto;
 
 import java.util.List;
 
@@ -7,12 +7,17 @@ public class Routine {
 	String name;
 	int difficulty;
 	int numDays;
+	int id;
 	
-	public Routine(List<Exercise> exercises, String name, int difficulty, int numDays){
-		this.exercises = exercises;
-		this.name = name;
-		this.difficulty = difficulty;
-		this.numDays = numDays;
+	public Routine(){
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public List<Exercise> getExercises() {

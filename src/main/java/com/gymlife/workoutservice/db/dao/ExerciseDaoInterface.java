@@ -1,6 +1,8 @@
-package com.gymlife.workoutservice.db;
+package com.gymlife.workoutservice.db.dao;
 
 import java.util.List;
+
+import com.gymlife.workoutservice.db.dto.Exercise;
 
 public interface ExerciseDaoInterface {
 

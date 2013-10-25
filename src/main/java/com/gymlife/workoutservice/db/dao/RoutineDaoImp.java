@@ -17,6 +17,7 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 
 	private Connection connection;
 	private PreparedStatement loadAllStmt;
+	private PreparedStatement loadByIdStmt;
 	private ExerciseDaoImp exerciseDao;
 
 	public RoutineDaoImp() {
@@ -61,9 +62,38 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 	}
 
 	@Override
-	public Routine getRoutine(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Routine getRoutine(int id) throws SQLException {
+		Routine r = new Routine();
+		ResultSet result = null;
+
+		try {
+			connection = ConnectionFactory.getConnection();
+			loadByIdStmt = connection.prepareStatement("select * from routine where id = ?");
+			loadByIdStmt.setString(1, Integer.toString(id));
+			result = loadByIdStmt.executeQuery();
+			if(!result.next())
+				return null;
+			
+			r.setId(result.getInt("id"));
+
+			String[] exerciseIds = result.getString("exercises").split(",");
+			List<Exercise> exers = new ArrayList<Exercise>();
+			for (int i = 0; i < exerciseIds.length; i++) {
+				exers.add(exerciseDao.getWorkout(Integer
+						.parseInt(exerciseIds[i])));
+			}
+
+			r.setExercises(exers);
+			r.setDifficulty(result.getInt("difficulty"));
+			r.setNumDays(result.getInt("num_days"));
+			r.setName(result.getString("name"));			
+		} finally {
+			DBUtil.close(result);
+			DBUtil.close(loadAllStmt);
+			DBUtil.close(connection);
+		}
+		
+		return r;
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import com.gymlife.workoutservice.db.dto.Routines;
 public interface RoutineDaoInterface {
 
 	public Routines getRoutines() throws SQLException;
-	public Routine getRoutine(int id);
+	public Routine getRoutine(int id) throws SQLException;
 	public void addWorkout(int id);
 	public void deleteWorkout(int id);
 	public void deleteRoutine(int id);

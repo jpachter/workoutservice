@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.gymlife.workoutservice.db.dto.User;
 import com.gymlife.workoutservice.db.util.ConnectionFactory;
 import com.gymlife.workoutservice.db.util.DBUtil;
 import com.gymlife.workoutservice.db.util.SecureRandomFactory;
@@ -17,8 +18,59 @@ public class UserDaoImp implements UserDaoInterface{
 	private PreparedStatement getSaltAndPass;
 	private PreparedStatement registerUser;
 	private PreparedStatement userExists;
+	private PreparedStatement getUserById;
 
+	@Override
+	public User getById(String id) throws SQLException {
+		ResultSet result = null;
+		try{
+			connection = ConnectionFactory.getConnection();
+			getUserById = connection.prepareStatement("select * from user where id = ?");
+			getUserById.setString(1, id);
+			result = getUserById.executeQuery();
+			if(!result.next())
+				return null;
+			
+			User u = new User();
+			u.setEmail(result.getString("email"));
+			u.setRoutines(null);
+			u.setId(result.getInt("id"));
+			u.setUsername(result.getString("username"));
 
+			return u;
+			
+		} finally{
+			DBUtil.close(result);
+			DBUtil.close(getSaltAndPass);
+			DBUtil.close(connection);
+		}
+	}
+	
+	@Override
+	public User getByUsername(String username) throws SQLException {
+		ResultSet result = null;
+		try{
+			connection = ConnectionFactory.getConnection();
+			getUserById = connection.prepareStatement("select * from user where username = ?");
+			getUserById.setString(1, username);
+			result = getUserById.executeQuery();
+			if(!result.next())
+				return null;
+			
+			User u = new User();
+			u.setEmail(result.getString("email"));
+			u.setRoutines(null);
+			u.setId(result.getInt("id"));
+			u.setUsername(result.getString("username"));
+
+			return u;
+			
+		} finally{
+			DBUtil.close(result);
+			DBUtil.close(getSaltAndPass);
+			DBUtil.close(connection);
+		}
+	}
 	
 	@Override
 	public boolean signIn(String username, String password) throws SQLException {

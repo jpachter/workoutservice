@@ -3,11 +3,9 @@ package com.gymlife.workoutservice.db.dto;
 public class User {
 	
 	int id;
-	String routines;
+	Routines routines;
 	String username;
 	String email;
-	long salt;
-	String hash;
 	
 	public User(){}
 	
@@ -19,11 +17,11 @@ public class User {
 		this.id = id;
 	}
 	
-	public String getRoutines() {
+	public Routines getRoutines() {
 		return routines;
 	}
 	
-	public void setRoutines(String routines) {
+	public void setRoutines(Routines routines) {
 		this.routines = routines;
 	}
 	
@@ -42,21 +40,4 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	public long getSalt() {
-		return salt;
-	}
-	
-	public void setSalt(long salt) {
-		this.salt = salt;
-	}
-	
-	public String getHash() {
-		return hash;
-	}
-	
-	public void setHash(String hash) {
-		this.hash = hash;
-	}
-
 }

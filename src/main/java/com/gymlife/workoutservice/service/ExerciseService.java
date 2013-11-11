@@ -23,7 +23,7 @@ public class ExerciseService
   @Produces(MediaType.APPLICATION_JSON)
   public Exercise findById(@PathParam("id") String id) throws NumberFormatException, SQLException
   {
-	  return dao.getWorkout(Integer.parseInt(id));
+	  return dao.getExercise(Integer.parseInt(id));
   }
   
   @GET

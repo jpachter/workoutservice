@@ -1,15 +1,24 @@
 package com.gymlife.workoutservice.db.dto;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeSet;
+
+import com.gymlife.workoutservice.Day;
+import com.gymlife.workoutservice.Difficulty;
 
 public class Routine {
-	List<Exercise> exercises;
+	TreeSet<Workout> workouts;
+	TreeSet<CompletedWorkout> completedWorkouts;
 	String name;
-	int difficulty;
-	int numDays;
+	Difficulty difficulty;
+	TreeSet<Day> days;
 	int id;
 	
 	public Routine(){
+		workouts = new TreeSet<Workout>();
+		completedWorkouts = new TreeSet<CompletedWorkout>();
+		days = new TreeSet<Day>();
 	}
 	
 	public int getId() {
@@ -20,12 +29,22 @@ public class Routine {
 		this.id = id;
 	}
 	
-	public List<Exercise> getExercises() {
-		return exercises;
+	public void completeWorkout(Workout w){
+		completedWorkouts.add(new CompletedWorkout(w));
+	}
+	
+	public TreeSet<Workout> getWorkouts() {
+		return workouts;
 	}
 
-	public void setExercises(List<Exercise> exercises) {
-		this.exercises = exercises;
+	public void addWorkout(Workout workout){
+		workouts.add(workout);
+		days.add(workout.getDay());
+	}
+	
+	public void removeWorkout(Workout workout){
+		workouts.remove(workout);
+		days.remove(workout.getDay());
 	}
 
 	public String getName() {
@@ -36,19 +55,15 @@ public class Routine {
 		this.name = name;
 	}
 
-	public int getDifficulty() {
+	public Difficulty getDifficulty() {
 		return difficulty;
 	}
 
-	public void setDifficulty(int difficulty) {
+	public void setDifficulty(Difficulty difficulty) {
 		this.difficulty = difficulty;
 	}
 
-	public int getNumDays() {
-		return numDays;
-	}
-
-	public void setNumDays(int numDays) {
-		this.numDays = numDays;
+	public TreeSet<Day> getDays() {
+		return days;
 	}
 }

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gymlife.workoutservice.Difficulty;
 import com.gymlife.workoutservice.db.dto.Exercise;
 import com.gymlife.workoutservice.db.dto.Routine;
 import com.gymlife.workoutservice.db.dto.Routines;
@@ -41,13 +42,13 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 				String[] exerciseIds = result.getString("exercises").split(",");
 				List<Exercise> exers = new ArrayList<Exercise>();
 				for (int i = 0; i < exerciseIds.length; i++) {
-					exers.add(exerciseDao.getWorkout(Integer
+					exers.add(exerciseDao.getExercise(Integer
 							.parseInt(exerciseIds[i])));
 				}
 
-				r.setExercises(exers);
-				r.setDifficulty(result.getInt("difficulty"));
-				r.setNumDays(result.getInt("num_days"));
+				//r.setExercises(exers);
+				//r.setDifficulty(Difficulty.forValue(result.getInt("difficulty")));
+				//r.setNumDays(result.getInt("num_days"));
 				r.setName(result.getString("name"));
 				routineList.add(r);
 			}
@@ -79,14 +80,14 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 			String[] exerciseIds = result.getString("exercises").split(",");
 			List<Exercise> exers = new ArrayList<Exercise>();
 			for (int i = 0; i < exerciseIds.length; i++) {
-				exers.add(exerciseDao.getWorkout(Integer
+				exers.add(exerciseDao.getExercise(Integer
 						.parseInt(exerciseIds[i])));
 			}
 
-			r.setExercises(exers);
-			r.setDifficulty(result.getInt("difficulty"));
-			r.setNumDays(result.getInt("num_days"));
-			r.setName(result.getString("name"));			
+			//r.setExercises(exers);
+			//r.setDifficulty(result.getInt("difficulty"));
+			//r.setNumDays(result.getInt("num_days"));
+			//r.setName(result.getString("name"));			
 		} finally {
 			DBUtil.close(result);
 			DBUtil.close(loadAllStmt);

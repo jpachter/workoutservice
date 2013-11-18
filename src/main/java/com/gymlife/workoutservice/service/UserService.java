@@ -21,14 +21,14 @@ public class UserService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getUserById(@PathParam("id") String id) throws SQLException{
+	public User getUserById(@PathParam("id") String id){
 		return dao.getById(id);
 	}
 	
 	@GET
 	@Path("/~{username}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getUserByUsername(@PathParam("username") String username) throws SQLException{
+	public User getUserByUsername(@PathParam("username") String username){
 		return dao.getByUsername(username);
 	}
 	
@@ -36,7 +36,7 @@ public class UserService {
 	@Path("/signin")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Boolean login(@FormParam("username") String username,
-			@FormParam("password") String password) throws SQLException {
+			@FormParam("password") String password){
 		return dao.signIn(username, password);
 
 	}
@@ -46,7 +46,9 @@ public class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Boolean register(@FormParam("username") String username,
 			@FormParam("password") String password,
-			@FormParam("email") String email) throws SQLException {
-		return dao.register(username, password, email);
+			@FormParam("email") String email,
+			@FormParam("firstName") String firstName,
+			@FormParam("lastName") String lastName) {
+		return dao.register(username, password, email, firstName, lastName);
 	}
 }

@@ -1,16 +1,12 @@
 package com.gymlife.workoutservice.service;
  
-import java.sql.SQLException;
 import java.util.List;
 
 import com.gymlife.workoutservice.db.dao.RoutineDaoImp;
-import com.gymlife.workoutservice.db.dto.Exercise;
 import com.gymlife.workoutservice.db.dto.Routine;
-import com.gymlife.workoutservice.db.dto.Routines;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
  
@@ -23,11 +19,11 @@ public class RoutineService
  
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Routines findAll() throws SQLException
+  public List<Routine> getRoutines()
   {
 	  return dao.getRoutines();
   }
-  
+  /*
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
@@ -42,5 +38,5 @@ public class RoutineService
   public Routine findByUserId(@PathParam("id") String id) throws SQLException
   {
 	  return dao.getRoutineByUser(Integer.parseInt(id));
-  }
+  }*/
 }

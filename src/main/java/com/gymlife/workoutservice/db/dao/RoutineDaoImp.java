@@ -9,13 +9,10 @@ import java.util.List;
 
 import com.gymlife.workoutservice.Day;
 import com.gymlife.workoutservice.Difficulty;
-import com.gymlife.workoutservice.Type;
-import com.gymlife.workoutservice.db.dto.CompletedWorkout;
 import com.gymlife.workoutservice.db.dto.Exercise;
-import com.gymlife.workoutservice.db.dto.ExerciseMetrics;
-import com.gymlife.workoutservice.db.dto.FullExercise;
+import com.gymlife.workoutservice.db.dto.ExerciseCreator;
 import com.gymlife.workoutservice.db.dto.Routine;
-import com.gymlife.workoutservice.db.dto.Routines;
+import com.gymlife.workoutservice.db.dto.RoutineWeek;
 import com.gymlife.workoutservice.db.dto.Workout;
 import com.gymlife.workoutservice.db.util.ConnectionFactory;
 import com.gymlife.workoutservice.db.util.DBUtil;
@@ -23,7 +20,6 @@ import com.gymlife.workoutservice.db.util.DBUtil;
 public class RoutineDaoImp implements RoutineDaoInterface {
 
 	private Connection connection;
-	private PreparedStatement loadAllStmt;
 	private PreparedStatement loadByIdStmt;
 	private PreparedStatement loadByUserIdStmt;
 	private ExerciseDaoImp exerciseDao;
@@ -33,42 +29,99 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 	}
 
 	@Override
-	public Routines getRoutines() throws SQLException {
-		Routines routines = new Routines();
-		List<Routine> routineList = new ArrayList<Routine>();
+	public List<Routine> getRoutines(){
+		PreparedStatement loadRoutines  = null;
 		ResultSet result = null;
-
+		List<Routine> routines = new ArrayList<Routine>();
+		Routine curRoutine;
+		int lastRoutine = -1;
+		RoutineWeek routineWeek;
+		Workout workout;
+		int numExercises = 0;
+		int difficultyTotal = 0;
+		
 		try {
 			connection = ConnectionFactory.getConnection();
-			loadAllStmt = connection.prepareStatement("select * from routine");
-			result = loadAllStmt.executeQuery();
+			loadRoutines = connection.prepareStatement("SELECT Routines.RoutineID, Routines.Name, "
+					+ "Routines.CreatorID, Routines.Rating, RoutineExerciseRelation.ExerciseID, "
+					+ "RoutineExerciseRelation.SetsGoal, RoutineExerciseRelation.RepsGoal, "
+					+ "RoutineExerciseRelation.ScheduledDay, RoutineExerciseRelation.CompletedTime, "
+					+ "RoutineExerciseRelation.WeekNumber "
+					+ "FROM Routines "
+					+ "INNER JOIN RoutineExerciseRelation "
+					+ "ON Routines.RoutineID=RoutineExerciseRelation.RoutineID "
+					+ "WHERE UserID=0 "
+					+ "ORDER BY Routines.RoutineID ASC, RoutineExerciseRelation.WeekNumber ASC, RoutineExerciseRelation.ScheduledDay ASC ");
+			result = loadRoutines.executeQuery();
+			
 			while (result.next()) {
-				Routine r = new Routine();
-				//r.setId(result.getInt("id"));
-
-				String[] exerciseIds = result.getString("exercises").split(",");
-				List<Exercise> exers = new ArrayList<Exercise>();
-				for (int i = 0; i < exerciseIds.length; i++) {
-					exers.add(exerciseDao.getExercise(Integer
-							.parseInt(exerciseIds[i])));
+				int routineID = result.getInt("RoutineID");
+				
+				if(lastRoutine == routineID)
+					curRoutine = routines.get(routines.size()-1);
+				else{
+					curRoutine = new Routine();
+					routines.add(curRoutine);
+					numExercises = 0;
+					difficultyTotal = 0;
+					lastRoutine = routineID;
+					
+					curRoutine.setId(result.getInt("RoutineID"));
+					curRoutine.setName(result.getString("Name"));
+					curRoutine.setCreatorId(result.getString("CreatorID"));
+					curRoutine.setRating(result.getDouble("Rating"));
 				}
+				
+				int weekNum = result.getInt("WeekNumber");
+				String schedDay = result.getString("ScheduledDay");
 
-				//r.setExercises(exers);
-				//r.setDifficulty(Difficulty.forValue(result.getInt("difficulty")));
-				//r.setNumDays(result.getInt("num_days"));
-				//r.setName(result.getString("name"));
-				routineList.add(r);
+				if(curRoutine.getRoutineWeeks().size() > 0 && 
+				   curRoutine.getRoutineWeeks().last().getWeekNumber() == weekNum){
+					routineWeek = curRoutine.getRoutineWeeks().last();
+				}
+				else{
+					routineWeek = new RoutineWeek();
+					routineWeek.setWeekNumber(weekNum);
+					curRoutine.addRoutineWeek(routineWeek);
+				}
+				
+				if(routineWeek.getWorkouts().size() > 0 &&
+				   routineWeek.getWorkouts().last().getScheduledDay().equals(Day.forValue(schedDay))){
+					workout = routineWeek.getWorkouts().last();
+				}
+				else{
+					workout = new Workout();
+					workout.setScheduledDay(Day.forValue(schedDay));
+					routineWeek.addWorkout(workout);
+				}
+				
+				ExerciseCreator exer = new ExerciseCreator(exerciseDao.getExercise(result.getInt("ExerciseID")));
+				exer.setRepsGoal(result.getInt("RepsGoal"));
+				exer.setSetsGoal(result.getInt("SetsGoal"));
+				difficultyTotal += exer.getDifficulty().getRank();
+				numExercises++;
+				workout.addExercise(exer);
+				workout.addMuscleGroups(exer.getMuscleGroups());
+				routineWeek.addDayOfWeek(Day.forValue(result.getString("ScheduledDay")));
+				curRoutine.setDifficulty(Difficulty.forRank((int)difficultyTotal/numExercises));
+
 			}
-		} finally {
+
+			//Calculate ROUTINE difficulty and percentFinished
+
+		}
+		catch(SQLException e){
+			System.out.println("SQLException error on getRoutines.");
+		}	
+		finally {
 			DBUtil.close(result);
-			DBUtil.close(loadAllStmt);
+			DBUtil.close(loadRoutines);
 			DBUtil.close(connection);
 		}
 		
-		routines.setRoutines(routineList);
 		return routines;
 	}
-
+/*
 	@Override
 	public Routine getRoutineByUser(int userID) throws SQLException {
 		Routine r = new Routine();
@@ -202,7 +255,7 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 		
 		return r;
 	}
-
+*/
 	@Override
 	public void addWorkout(int id) {
 		// TODO Auto-generated method stub
@@ -219,6 +272,18 @@ public class RoutineDaoImp implements RoutineDaoInterface {
 	public void deleteRoutine(int id) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public Routine getCurrentRoutine(int userID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Routine> getCompletedRoutines(int userID) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -15,121 +15,144 @@ import com.gymlife.workoutservice.db.util.SecurityUtil;
 public class UserDaoImp implements UserDaoInterface{
 
 	private Connection connection;
-	private PreparedStatement getSaltAndPass;
-	private PreparedStatement registerUser;
-	private PreparedStatement userExists;
-	private PreparedStatement getUserById;
 
 	@Override
-	public User getById(String id) throws SQLException {
+	public User getById(String id){
+		PreparedStatement getUserById  = null;
+		User u = null;
 		ResultSet result = null;
+		
 		try{
 			connection = ConnectionFactory.getConnection();
-			getUserById = connection.prepareStatement("select * from user where id = ?");
+			getUserById = connection.prepareStatement("select * from Users where UserID = ?");
 			getUserById.setString(1, id);
 			result = getUserById.executeQuery();
 			if(!result.next())
 				return null;
 			
-			User u = new User();
-			u.setEmail(result.getString("email"));
-			u.setRoutines(null);
-			u.setId(result.getInt("id"));
-			u.setUsername(result.getString("username"));
-
-			return u;
-			
-		} finally{
+			u = new User();
+			u.setEmail(result.getString("Email"));
+			u.setUserName(result.getString("UserName"));
+			u.setId(result.getInt("UserID"));
+			u.setFirstName(result.getString("FirstName"));
+			u.setLastName(result.getString("LastName"));
+		} 
+		catch(SQLException e){
+			System.out.println("SQLException error on getByID.");
+		}			
+		finally{
 			DBUtil.close(result);
-			DBUtil.close(getSaltAndPass);
+			DBUtil.close(getUserById);
 			DBUtil.close(connection);
 		}
+		return u;
 	}
 	
 	@Override
-	public User getByUsername(String username) throws SQLException {
+	public User getByUsername(String username){
+		PreparedStatement getUserByName = null;
+		User u = null;
 		ResultSet result = null;
+		
 		try{
 			connection = ConnectionFactory.getConnection();
-			getUserById = connection.prepareStatement("select * from user where username = ?");
-			getUserById.setString(1, username);
-			result = getUserById.executeQuery();
+			getUserByName = connection.prepareStatement("select * from Users where UserName = ?");
+			getUserByName.setString(1, username);
+			result = getUserByName.executeQuery();
 			if(!result.next())
 				return null;
 			
-			User u = new User();
-			u.setEmail(result.getString("email"));
-			u.setRoutines(null);
-			u.setId(result.getInt("id"));
-			u.setUsername(result.getString("username"));
-
-			return u;
-			
-		} finally{
+			u = new User();
+			u.setEmail(result.getString("Email"));
+			u.setUserName(result.getString("UserName"));
+			u.setId(result.getInt("UserID"));
+			u.setFirstName(result.getString("FirstName"));
+			u.setLastName(result.getString("LastName"));			
+		} 	
+		catch(SQLException e){
+			System.out.println("SQLException error on getByUsername.");
+		}	
+		finally{
 			DBUtil.close(result);
-			DBUtil.close(getSaltAndPass);
+			DBUtil.close(getUserByName);
 			DBUtil.close(connection);
 		}
+		return u;
 	}
 	
 	@Override
-	public boolean signIn(String username, String password) throws SQLException {
+	public boolean signIn(String username, String password){
+		PreparedStatement getSaltAndPass = null;
 		ResultSet result = null;
+		String salt = null;
+		String hash = null;
+		String inputHash = null;
+		
 		try{
 			connection = ConnectionFactory.getConnection();
-			getSaltAndPass = connection.prepareStatement("select salt, hash from user where username = ?");
+			getSaltAndPass = connection.prepareStatement("select Salt, Hash from Users where UserName = ?");
 			getSaltAndPass.setString(1, username);
 			result = getSaltAndPass.executeQuery();
 			if(!result.next())
 				return false;
 			
-			String salt = result.getString("salt");
-			String realHash = result.getString("hash");
-			String userHash = SecurityUtil.getHash(salt, password);
-			
-			return realHash.equals(userHash) ? true : false;
-			
-		} finally{
+			salt = result.getString("Salt");
+			hash = result.getString("Hash");
+			inputHash = SecurityUtil.getHash(salt, password);
+		} 
+		catch(SQLException e){
+			System.out.println("SQLException error on signIn.");
+		}	
+		finally{
 			DBUtil.close(result);
 			DBUtil.close(getSaltAndPass);
 			DBUtil.close(connection);
 		}
+		return hash.equals(inputHash) ? true : false;
 	}
 
 	@Override
-	public boolean register(String username, String password, String email) throws SQLException {
+	public boolean register(String username, String password, 
+                            String firstName, String lastName, String email){
+		PreparedStatement userExists = null;
+		PreparedStatement registerUser = null;
 		ResultSet result = null;
+		String salt = null;
+		String hash = null;
+		String inputHash = null;
+		SecureRandom rand;
+		
 		try{
 			connection = ConnectionFactory.getConnection();
-			userExists = connection.prepareStatement("select COUNT(*) AS count from user where username = ?");
+			userExists = connection.prepareStatement("select COUNT(*) AS count from Users where UserName = ?");
 			userExists.setString(1, username);
 			result = userExists.executeQuery();
 			
-			if(!result.next())
+			if(!result.next() || (result.getInt("count") != 0))
 				return false;
 			
-			if(result.getInt("count") != 0)
-				return false;
+			rand = SecureRandomFactory.getRandom();
+		    salt = new Integer(rand.nextInt()).toString();
+			hash = SecurityUtil.getHash(salt, password);
 			
-			SecureRandom rand = SecureRandomFactory.getRandom();
-		    String salt = new Integer(rand.nextInt()).toString();
-			String hash = SecurityUtil.getHash(salt, password);
-			
-			registerUser = connection.prepareStatement("insert into user (username, email, salt, hash) values (?,?,?,?)");
+			registerUser = connection.prepareStatement("insert into User (UserName, Email, Salt, Hash, FirstName, LastName) values (?,?,?,?,?,?)");
 			registerUser.setString(1, username);
 			registerUser.setString(2, email);
 			registerUser.setString(3, salt);
 			registerUser.setString(4, hash);
+			registerUser.setString(5, firstName);
+			registerUser.setString(6, lastName);
 			registerUser.executeUpdate();
-			
-			return true;
-			
-		} finally{
+		}
+		catch(SQLException e){
+			System.out.println("SQLException error on register.");
+		}	
+		finally{
 			DBUtil.close(result);
-			DBUtil.close(getSaltAndPass);
+			DBUtil.close(userExists);
+			DBUtil.close(registerUser);
 			DBUtil.close(connection);
 		}
-		
+		return true;
 	}
-
 }

@@ -30,7 +30,7 @@ public class ExerciseService
   @Produces(MediaType.APPLICATION_JSON)
   public List<Exercise> findAll() throws SQLException
   {
-	  return dao.getAllWorkouts();
+	  return null;
   }
   
   @POST

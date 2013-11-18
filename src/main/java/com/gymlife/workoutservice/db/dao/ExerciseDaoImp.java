@@ -11,34 +11,36 @@ import com.gymlife.workoutservice.Difficulty;
 import com.gymlife.workoutservice.MuscleGroup;
 import com.gymlife.workoutservice.Type;
 import com.gymlife.workoutservice.db.dto.Exercise;
+import com.gymlife.workoutservice.db.dto.User;
 import com.gymlife.workoutservice.db.util.ConnectionFactory;
 import com.gymlife.workoutservice.db.util.DBUtil;
 
 public class ExerciseDaoImp {
 	
 	private Connection connection;
-	private PreparedStatement loadAllStmt;
-	private PreparedStatement loadMuscleGroup;
-	private PreparedStatement loadPrimary;
-	private PreparedStatement loadSecondary;
-	private PreparedStatement loadByIdStmt;
 
 	public ExerciseDaoImp() {}
 
-	public Exercise getExercise(int id) throws SQLException {
-		Exercise e = new Exercise();
+	public Exercise getExercise(int exerciseID){
+		PreparedStatement loadByIdStmt  = null;
+		PreparedStatement loadMuscleGroup  = null;
+		PreparedStatement loadPrimary  = null;
+		PreparedStatement loadSecondary  = null;
+		Exercise e = null;
 		ResultSet result = null;
 		ResultSet result2 = null;
 		ResultSet result3 = null;
 		ResultSet result4 = null;
+		
 		try{
 			connection = ConnectionFactory.getConnection();
 			loadByIdStmt = connection.prepareStatement("select * from Exercises where ExerciseID = ?");
-			loadByIdStmt.setString(1, Integer.toString(id));
+			loadByIdStmt.setString(1, Integer.toString(exerciseID));
 			result = loadByIdStmt.executeQuery();
 			if(!result.next())
 				return null;
 			
+			e = new Exercise();
 			e.setId(result.getInt("ExerciseID"));
 			e.setName(result.getString("Name"));
 			e.setDifficulty(Difficulty.forValue(result.getString("Difficulty")));
@@ -51,11 +53,11 @@ public class ExerciseDaoImp {
 								"INNER JOIN MuscleGroup " +
 								"ON MuscleGroup.MuscleGroupID=ExerciseMuscleGroupRelation.MuscleGroupID " +
 								"WHERE Exercises.ExerciseID=?");
-			loadMuscleGroup.setInt(1, id);
-			result4 = loadMuscleGroup.executeQuery();
+			loadMuscleGroup.setInt(1, exerciseID);
+			result2 = loadMuscleGroup.executeQuery();
 
-			while(result4.next()){
-				e.addMuscleGroup(result4.getString("Name"));
+			while(result2.next()){
+				e.addMuscleGroup(result2.getString("Name"));
 			}
 			
 			loadPrimary = connection.prepareStatement("SELECT Muscles.Name " +
@@ -65,11 +67,11 @@ public class ExerciseDaoImp {
 							"INNER JOIN Muscles " +
 							"ON Muscles.MuscleID=ExercisePrimaryMuscleRelation.MuscleID " +
 							"WHERE Exercises.ExerciseID=?");
-			loadPrimary.setString(1, Integer.toString(id));
-			result2 = loadByIdStmt.executeQuery();
+			loadPrimary.setString(1, Integer.toString(exerciseID));
+			result3 = loadPrimary.executeQuery();
 
-			while(result2.next()){
-				e.addPrimaryMuscle(result2.getString("Name"));
+			while(result3.next()){
+				e.addPrimaryMuscle(result3.getString("Name"));
 			}
 			
 			loadSecondary = connection.prepareStatement("SELECT Muscles.Name " +
@@ -79,26 +81,35 @@ public class ExerciseDaoImp {
 							"INNER JOIN Muscles " +
 							"ON Muscles.MuscleID=ExerciseSecondaryMuscleRelation.MuscleID " +
 							"WHERE Exercises.ExerciseID=?;");
-			loadSecondary.setString(1, Integer.toString(id));
-			result3 = loadSecondary.executeQuery();
-			while(result3.next()){
-				e.addSecondaryMuscle(result3.getString("Name"));
+			loadSecondary.setString(1, Integer.toString(exerciseID));
+			result4 = loadSecondary.executeQuery();
+			while(result4.next()){
+				e.addSecondaryMuscle(result4.getString("Name"));
 			}
-		} finally{
+		}
+		catch(SQLException ex){
+			System.out.println("SQLException error on getExercise.");
+		}		
+		finally{
 			DBUtil.close(result);
-			DBUtil.close(loadByIdStmt);
 			DBUtil.close(result2);
-			DBUtil.close(loadPrimary);
 			DBUtil.close(result3);
-			DBUtil.close(loadSecondary);
 			DBUtil.close(result4);
+			DBUtil.close(loadByIdStmt);
+			DBUtil.close(loadPrimary);
+			DBUtil.close(loadSecondary);
+			DBUtil.close(loadMuscleGroup);
 			DBUtil.close(connection);
 		}
 		return e;
 	}
 
-	public List<Exercise> getAllWorkouts() throws SQLException {
+	public List<Exercise> getAllExercises(){
 		List<Exercise> all = new ArrayList<Exercise>();
+		PreparedStatement loadAll  = null;
+		PreparedStatement loadMuscleGroup  = null;
+		PreparedStatement loadPrimary  = null;
+		PreparedStatement loadSecondary  = null;
 		ResultSet result = null;
 		ResultSet result2 = null;
 		ResultSet result3 = null;
@@ -106,8 +117,8 @@ public class ExerciseDaoImp {
 		
 		try{
 			connection = ConnectionFactory.getConnection();
-			loadAllStmt = connection.prepareStatement("select * from Exercises");
-			result = loadAllStmt.executeQuery();
+			loadAll = connection.prepareStatement("select * from Exercises");
+			result = loadAll.executeQuery();
 
 			while (result.next()) {
 				Exercise e = new Exercise();
@@ -125,10 +136,10 @@ public class ExerciseDaoImp {
 						"ON MuscleGroup.MuscleGroupID=ExerciseMuscleGroupRelation.MuscleGroupID " +
 						"WHERE Exercises.ExerciseID=?");
 				loadMuscleGroup.setInt(1, e.getId());
-				result4 = loadMuscleGroup.executeQuery();
+				result2 = loadMuscleGroup.executeQuery();
 
-				while(result4.next()){
-					e.addMuscleGroup(result4.getString("Name"));
+				while(result2.next()){
+					e.addMuscleGroup(result2.getString("Name"));
 				}
 
 				loadPrimary = connection.prepareStatement("SELECT Muscles.Name " +
@@ -139,10 +150,10 @@ public class ExerciseDaoImp {
 						"ON Muscles.MuscleID=ExercisePrimaryMuscleRelation.MuscleID " +
 						"WHERE Exercises.ExerciseID=?");
 				loadPrimary.setInt(1, e.getId());
-				result2 = loadPrimary.executeQuery();
+				result3 = loadPrimary.executeQuery();
 
-				while(result2.next()){
-					e.addPrimaryMuscle(result2.getString("Name"));
+				while(result3.next()){
+					e.addPrimaryMuscle(result3.getString("Name"));
 				}
 
 				loadSecondary = connection.prepareStatement("SELECT Muscles.Name " +
@@ -153,20 +164,27 @@ public class ExerciseDaoImp {
 						"ON Muscles.MuscleID=ExerciseSecondaryMuscleRelation.MuscleID " +
 						"WHERE Exercises.ExerciseID=?");
 				loadSecondary.setInt(1, e.getId());
-				result3 = loadSecondary.executeQuery();
+				result4 = loadSecondary.executeQuery();
 				
-				while(result3.next()){
-					e.addSecondaryMuscle(result3.getString("Name"));
+				while(result4.next()){
+					e.addSecondaryMuscle(result4.getString("Name"));
 				}
 
 				all.add(e);
 			}
-		} finally{
+		} 
+		catch(SQLException ex){
+			System.out.println("SQLException error on getAllExercises.");
+		}	
+		finally{
 			DBUtil.close(result);
 			DBUtil.close(result2);
 			DBUtil.close(result3);
 			DBUtil.close(result4);
-			DBUtil.close(loadAllStmt);
+			DBUtil.close(loadMuscleGroup);
+			DBUtil.close(loadPrimary);
+			DBUtil.close(loadSecondary);
+			DBUtil.close(loadAll);
 			DBUtil.close(connection);
 		}
 		

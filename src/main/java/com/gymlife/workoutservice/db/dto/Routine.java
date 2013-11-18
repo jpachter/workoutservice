@@ -1,69 +1,80 @@
 package com.gymlife.workoutservice.db.dto;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.TreeSet;
 
 import com.gymlife.workoutservice.Day;
 import com.gymlife.workoutservice.Difficulty;
 
 public class Routine {
-	TreeSet<Workout> workouts;
-	TreeSet<CompletedWorkout> completedWorkouts;
-	String name;
-	Difficulty difficulty;
-	TreeSet<Day> days;
-	int id;
+	private int id;
+	private String name;
+	private String creatorId;
+	private double rating;
+	private double percentFinished;
+	private TreeSet<RoutineWeek> routineWeeks;
+	private Difficulty difficulty;
 	
 	public Routine(){
-		workouts = new TreeSet<Workout>();
-		completedWorkouts = new TreeSet<CompletedWorkout>();
-		days = new TreeSet<Day>();
+		routineWeeks = new TreeSet<RoutineWeek>();
+	}
+
+	public Difficulty getDifficulty(){
+		return difficulty;
 	}
 	
 	public int getId() {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	public void completeWorkout(Workout w){
-		completedWorkouts.add(new CompletedWorkout(w));
-	}
-	
-	public TreeSet<Workout> getWorkouts() {
-		return workouts;
-	}
-
-	public void addWorkout(Workout workout){
-		workouts.add(workout);
-		days.add(workout.getDay());
-	}
-	
-	public void removeWorkout(Workout workout){
-		workouts.remove(workout);
-		days.remove(workout.getDay());
-	}
-
 	public String getName() {
 		return name;
+	}
+
+	public String getCreatorId() {
+		return creatorId;
+	}
+
+	public double getRating() {
+		return rating;
+	}
+
+	public double getPercentFinished() {
+		return percentFinished;
+	}
+
+	public TreeSet<RoutineWeek> getRoutineWeeks() {
+		return routineWeeks;
+	}
+	
+	public void addRoutineWeek(RoutineWeek rw){
+		routineWeeks.add(rw);
+	}
+	
+	public void setDifficulty(Difficulty d){
+		this.difficulty = d;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public Difficulty getDifficulty() {
-		return difficulty;
+	public void setCreatorId(String creatorId) {
+		this.creatorId = creatorId;
 	}
 
-	public void setDifficulty(Difficulty difficulty) {
-		this.difficulty = difficulty;
+	public void setRating(double rating) {
+		this.rating = rating;
 	}
 
-	public TreeSet<Day> getDays() {
-		return days;
+	public void setPercentFinished(double percentFinished) {
+		this.percentFinished = percentFinished;
+	}
+
+	public void setRoutineWeeks(TreeSet<RoutineWeek> routineWeeks) {
+		this.routineWeeks = routineWeeks;
 	}
 }

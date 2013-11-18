@@ -7,11 +7,7 @@ import com.gymlife.workoutservice.db.dto.Exercise;
 public interface ExerciseDaoInterface {
 
 	public List<Exercise> getAllExercises();
-	public Exercise getWorkout(int id);
-	public Exercise getWorkout(String search);
+	public Exercise getExercise(int exerciseID);
 	public void addExercise(Exercise ex);
-	public void deleteExercise(int id);
-	public void updateWorkout(Exercise ex);
-	
-	
+	public void deleteExercise(int id);	
 }

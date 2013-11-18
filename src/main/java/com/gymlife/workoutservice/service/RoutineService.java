@@ -35,4 +35,12 @@ public class RoutineService
   {
 	  return dao.getRoutine(Integer.parseInt(id));
   }
+  
+  @GET
+  @Path("/user/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Routine findByUserId(@PathParam("id") String id) throws SQLException
+  {
+	  return dao.getRoutineByUser(Integer.parseInt(id));
+  }
 }

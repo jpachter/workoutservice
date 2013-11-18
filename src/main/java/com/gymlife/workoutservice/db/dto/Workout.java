@@ -10,10 +10,27 @@ public class Workout implements Comparable<Workout>{
 	Day day;
 	List<MuscleGroup> muscleGroup;
 	List<FullExercise> exercises;
+	String name;
+	int id;
 	
 	public Workout(){
 		muscleGroup = new LinkedList<MuscleGroup>();
 		exercises = new LinkedList<FullExercise>();
+	}
+	
+	public void setId(int id){
+		this.id = id;
+	}
+	
+	public int getId(){
+		return id;
+	}
+	public void setName(String name){
+		this.name = name;
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	public Day getDay() {

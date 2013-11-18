@@ -8,62 +8,43 @@ import com.gymlife.workoutservice.Day;
 import com.gymlife.workoutservice.Difficulty;
 
 public class Routine {
-	TreeSet<Workout> workouts;
-	TreeSet<CompletedWorkout> completedWorkouts;
-	String name;
-	Difficulty difficulty;
-	TreeSet<Day> days;
-	int id;
+	TreeSet<Workout> currentRoutine;
+	TreeSet<CompletedWorkout> completedRoutines;
+	int userId;
 	
 	public Routine(){
-		workouts = new TreeSet<Workout>();
-		completedWorkouts = new TreeSet<CompletedWorkout>();
-		days = new TreeSet<Day>();
+		currentRoutine = new TreeSet<Workout>();
+		completedRoutines = new TreeSet<CompletedWorkout>();
 	}
 	
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
+	public void addCompleteWorkout(CompletedWorkout w){
+		completedRoutines.add(w);
 	}
 	
-	public void completeWorkout(Workout w){
-		completedWorkouts.add(new CompletedWorkout(w));
+	public CompletedWorkout workoutAtTime(long time){
+		for(CompletedWorkout work : completedRoutines){
+			if (work.getDate() == time){
+				return work;
+			}
+		}
+		return null;
 	}
 	
-	public TreeSet<Workout> getWorkouts() {
-		return workouts;
+	public TreeSet<Workout> getCurrentRoutine() {
+		return currentRoutine;
+	}
+	
+	public TreeSet<CompletedWorkout> getCompletedRoutines(){
+		return completedRoutines;
 	}
 
 	public void addWorkout(Workout workout){
-		workouts.add(workout);
-		days.add(workout.getDay());
+		currentRoutine.add(workout);
 	}
 	
 	public void removeWorkout(Workout workout){
-		workouts.remove(workout);
-		days.remove(workout.getDay());
+		currentRoutine.remove(workout);
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Difficulty getDifficulty() {
-		return difficulty;
-	}
-
-	public void setDifficulty(Difficulty difficulty) {
-		this.difficulty = difficulty;
-	}
-
-	public TreeSet<Day> getDays() {
-		return days;
-	}
+	
 }

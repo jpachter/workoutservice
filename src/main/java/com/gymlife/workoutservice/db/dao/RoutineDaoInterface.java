@@ -13,5 +13,6 @@ public interface RoutineDaoInterface {
 	public void addWorkout(int id);
 	public void deleteWorkout(int id);
 	public void deleteRoutine(int id);
+	Routine getRoutineByUser(int userID) throws SQLException;
 	
 }

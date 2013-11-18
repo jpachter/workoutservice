@@ -6,7 +6,6 @@ public class FullExercise {
 	ExerciseMetrics actual;
 	
 	public FullExercise(){
-		
 	}
 	
 	public Exercise getExercise() {

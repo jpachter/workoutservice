@@ -3,7 +3,7 @@ package com.gymlife.workoutservice.db.dto;
 public class User {
 	
 	int id;
-	Routines routines;
+	long joined;
 	String username;
 	String email;
 	
@@ -15,14 +15,6 @@ public class User {
 	
 	public void setId(int id) {
 		this.id = id;
-	}
-	
-	public Routines getRoutines() {
-		return routines;
-	}
-	
-	public void setRoutines(Routines routines) {
-		this.routines = routines;
 	}
 	
 	public String getUsername() {

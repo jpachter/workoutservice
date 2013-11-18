@@ -22,8 +22,8 @@ public class CompletedWorkout extends Workout{
 
 	}
 
-	public String getDate() {
-		return String.valueOf(date);
+	public long getDate() {
+		return date;
 	}
 
 	public void setDate(long epochString) {

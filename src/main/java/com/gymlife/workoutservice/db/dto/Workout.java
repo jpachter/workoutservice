@@ -1,5 +1,6 @@
 package com.gymlife.workoutservice.db.dto;
 
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -12,7 +13,7 @@ public class Workout implements Comparable<Workout>{
 	private TreeSet<MuscleGroup> muscleGroup;
 	private List<Exercise> exercises;
 	private long timeStarted;
-	private long timeCompleted;
+	private Date timeCompleted;
 	
 	public Workout(){
 		muscleGroup = new TreeSet<MuscleGroup>();
@@ -35,7 +36,7 @@ public class Workout implements Comparable<Workout>{
 		return timeStarted;
 	}
 
-	public long getTimeCompleted() {
+	public Date getTimeCompleted() {
 		return timeCompleted;
 	}
 	
@@ -67,7 +68,7 @@ public class Workout implements Comparable<Workout>{
 		this.timeStarted = timeStarted;
 	}
 
-	public void setTimeCompleted(long timeCompleted) {
+	public void setTimeCompleted(Date timeCompleted) {
 		this.timeCompleted = timeCompleted;
 	}
 

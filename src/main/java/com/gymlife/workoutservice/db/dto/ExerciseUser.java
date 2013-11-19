@@ -1,5 +1,7 @@
 package com.gymlife.workoutservice.db.dto;
 
+import java.sql.Date;
+
 public class ExerciseUser extends ExerciseCreator {
 
 	private int weightGoal;
@@ -11,6 +13,18 @@ public class ExerciseUser extends ExerciseCreator {
 		super();
 	}
 	
+	public ExerciseUser(Exercise e){
+		setId(e.getId());
+		setName(e.getName());
+		setDifficulty(e.getDifficulty());
+		setType(e.getType());
+		setMuscleGroups(e.getMuscleGroups());
+		setPrimaryMuscles(e.getPrimaryMuscles());
+		setSecondaryMuscles(e.getSecondaryMuscles());
+	}
+	
+
+
 	public int getWeightGoal() {
 		return weightGoal;
 	}
@@ -26,6 +40,7 @@ public class ExerciseUser extends ExerciseCreator {
 	public int getWeightActual() {
 		return weightActual;
 	}
+
 
 	public void setWeightGoal(int weightGoal) {
 		this.weightGoal = weightGoal;

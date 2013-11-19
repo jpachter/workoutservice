@@ -7,7 +7,7 @@ import com.gymlife.workoutservice.db.dto.Routine;
 public interface RoutineDaoInterface {
 
 	public List<Routine> getRoutines();
-	public Routine getCurrentRoutine(int userID);
+	public List<Routine> getCurrentRoutine(int userID);
 	public List<Routine> getCompletedRoutines(int userID);
 	public void addWorkout(int id);
 	public void deleteWorkout(int id);

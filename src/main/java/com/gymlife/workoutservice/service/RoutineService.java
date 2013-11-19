@@ -7,6 +7,7 @@ import com.gymlife.workoutservice.db.dto.Routine;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
  
@@ -31,12 +32,20 @@ public class RoutineService
   {
 	  return dao.getRoutine(Integer.parseInt(id));
   }
+  */
+  @GET
+  @Path("/current/user/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<Routine> findCurrentRoutine(@PathParam("id") String id)
+  {
+	  return dao.getCurrentRoutine(Integer.parseInt(id));
+  }
   
   @GET
-  @Path("/user/{id}")
+  @Path("/completed/user/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Routine findByUserId(@PathParam("id") String id) throws SQLException
+  public List<Routine> findCompletedRoutines(@PathParam("id") String id)
   {
-	  return dao.getRoutineByUser(Integer.parseInt(id));
-  }*/
+	  return dao.getCompletedRoutines(Integer.parseInt(id));
+  }
 }
